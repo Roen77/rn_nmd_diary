@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../colors";
 import { useDB } from "../context";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 
 const View = styled.View`
   flex: 1;
@@ -56,20 +56,23 @@ const Home = ({ navigation: { navigate } }) => {
 
   useEffect(() => {
     const feelings = realm.objects("Feeling");
-    setFeelings(feelings);
-    feelings.addListener(() => {
-      const feelings = realm.objects("Feeling");
-      setFeelings(feelings);
+    feelings.addListener((feelings, changes) => {
+      //true라면 id가 큰거에서 작은거 순서로.. false면 반대
+      setFeelings(feelings.sorted("_id", true));
+      console.log(feelings, changes, "test");
     });
     return () => {
       feelings.removeAllListeners();
     };
   }, []);
-  //   useEffect(() => {
-  //     const feelings = realm.objects("Feeling");
-  //     const happay = feelings.filtered("emotion = '🤗'");
-  //     console.log("home", feelings, "happy", happay);
-  //   }, []);
+
+  const onPress = (id) => {
+    realm.write(() => {
+      const feeling = realm.objectForPrimaryKey("Feeling", id);
+      realm.delete(feeling);
+    });
+  };
+
   return (
     <View>
       <Title>My journal</Title>
@@ -79,10 +82,12 @@ const Home = ({ navigation: { navigate } }) => {
         ItemSeparatorComponent={Separator}
         keyExtractor={(feeling) => feeling._id + ""}
         renderItem={({ item }) => (
-          <Record>
-            <Emotion>{item.emotion}</Emotion>
-            <Message>{item.message}</Message>
-          </Record>
+          <TouchableOpacity onPress={() => onPress(item._id)}>
+            <Record>
+              <Emotion>{item.emotion}</Emotion>
+              <Message>{item.message}</Message>
+            </Record>
+          </TouchableOpacity>
         )}
       />
       <Btn onPress={() => navigate("Write")}>
