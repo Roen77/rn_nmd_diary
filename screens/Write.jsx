@@ -92,6 +92,22 @@ const Write = ({ navigation: { goBack } }) => {
     // setFeelings("");
     //goback하면 언마운트되서 위에꺼안해줘도됨
     // goBack();
+
+    //비디오 초반 5초만 봐도 보상받는 함수임..
+    AdMobRewarded.addEventListener("rewardedVideoUserDidEarnReward", () => {
+      AdMobRewarded.addEventListener("rewardedVideoDidDismiss", () => {
+        console.log("보상받았음!!!!!!");
+
+        realm.write(() => {
+          realm.create("Feeling", {
+            _id: Date.now(),
+            emotion: selectedEmotion,
+            message: feelings,
+          });
+        });
+        goBack();
+      });
+    });
   };
   return (
     <View>
