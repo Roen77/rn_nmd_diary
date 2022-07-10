@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../colors";
 import { useDB } from "../context";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, LayoutAnimation, TouchableOpacity } from "react-native";
 
 const View = styled.View`
   flex: 1;
@@ -57,6 +57,8 @@ const Home = ({ navigation: { navigate } }) => {
   useEffect(() => {
     const feelings = realm.objects("Feeling");
     feelings.addListener((feelings, changes) => {
+      //state가 변화가 되면 애니메이션을 적용 안드로이드에서는 해당 함수가 있는지 작동하는지 확인해야함 공식문서에있음
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
       //true라면 id가 큰거에서 작은거 순서로.. false면 반대
       setFeelings(feelings.sorted("_id", true));
       console.log(feelings, changes, "test");
