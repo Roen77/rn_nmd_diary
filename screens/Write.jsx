@@ -1,3 +1,4 @@
+import { AdMobInterstitial, AdMobRewarded } from "expo-ads-admob";
 import React, { useContext, useState } from "react";
 import { Alert } from "react-native";
 import styled from "styled-components/native";
@@ -64,7 +65,7 @@ const Write = ({ navigation: { goBack } }) => {
   const onChangeText = (text) => setFeelings(text);
   const onEmotionPress = (face) => setEmotion(face);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (feelings === "" || selectedEmotion == null) {
       return Alert.alert("Please complete form.");
     }
@@ -76,10 +77,21 @@ const Write = ({ navigation: { goBack } }) => {
       });
       console.log("feeling", feeling);
     });
+
+    // await AdMobInterstitial.setAdUnitID(
+    //   "ca-app-pub-3940256099942544/4411468910"
+    // );
+    // await AdMobInterstitial.requestAdAsync({ servePersonalizedAds: true });
+    // await AdMobInterstitial.showAdAsync();
+
+    // Display a rewarded ad
+    await AdMobRewarded.setAdUnitID("ca-app-pub-3940256099942544/1712485313"); // Test ID, Replace with your-admob-unit-id
+    await AdMobRewarded.requestAdAsync();
+    await AdMobRewarded.showAdAsync();
     // setEmotion(null);
     // setFeelings("");
     //goback하면 언마운트되서 위에꺼안해줘도됨
-    goBack();
+    // goBack();
   };
   return (
     <View>

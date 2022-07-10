@@ -4,6 +4,13 @@ import Navigator from "./navigator";
 import Realm from "realm";
 import AppLoading from "expo-app-loading";
 import { DBContext } from "./context";
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded,
+  setTestDeviceIDAsync,
+} from "expo-ads-admob";
 
 const FeelingSchema = {
   name: "Feeling",
@@ -19,6 +26,8 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [realm, setRealm] = useState(null);
   const startLoading = async () => {
+    // Set global test device ID
+    await setTestDeviceIDAsync("EMULATOR");
     const connection = await Realm.open({
       path: "roenDiaryDB",
       schema: [FeelingSchema],
